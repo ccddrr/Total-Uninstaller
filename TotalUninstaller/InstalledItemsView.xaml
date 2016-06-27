@@ -30,7 +30,7 @@
                 <DataGridTemplateColumn Header="Uninstall">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="totalUninstaller:InstalledItem">
-                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Uninstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Uninstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Tooltip}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -39,6 +39,7 @@
                 <DataGridTextColumn      Header="Install Location" Binding="{Binding InstallLocation}"                 IsReadOnly="True"/>
                 <DataGridHyperlinkColumn Header="Url"              Binding="{Binding Url}"                             IsReadOnly="True"/>
                 <DataGridTextColumn      Header="Version"          Binding="{Binding Version}"                         IsReadOnly="True"/>
+                <DataGridTextColumn      Header="Publisher"        Binding="{Binding Publisher}"                         IsReadOnly="True"/>
             </DataGrid.Columns>
 
             <DataGrid.ContextMenu>
@@ -82,8 +83,9 @@
                 VerticalAlignment="Center" 
                 Content="Cancel" 
                 Command="{Binding CancelUninstallCommand}" 
-                Style="{StaticResource AccentedSquareButtonStyle}"
+                Style="{StaticResource AccentedSquareButtonStyle}"                
                 controls:ButtonHelper.PreserveTextCase="True" Grid.Column="1"/>
+        
         <controls:MetroProgressBar Grid.Row="1"
                                    Background="LightBlue"
                                    VerticalAlignment="Bottom"

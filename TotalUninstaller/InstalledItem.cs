@@ -12,6 +12,9 @@ namespace TotalUninstaller
         public string   InstallLocation { get; set; }
         public Uri      Url             { get; set; }
         public Version  Version         { get; set; }
+        public string Publisher { get; set; }
+        public string Tooltip { get; set; }
+
         private bool _uninstall;
 
         public bool Uninstall
@@ -27,7 +30,7 @@ namespace TotalUninstaller
             }
         }
 
-        public InstalledItem(string product, string productCode, DateTime installDate, string installLocation, Uri url, Version version)
+        public InstalledItem(string product, string productCode, DateTime installDate, string installLocation, Uri url, Version version, string publisher)
         {
             Product         = product;
             ProductCode     = productCode;
@@ -35,6 +38,9 @@ namespace TotalUninstaller
             InstallLocation = installLocation;
             Url             = url;
             Version         = version;
+            Publisher       = publisher;
+
+            Tooltip = Product + ProductCode;
         }
 
         public override string ToString()
@@ -46,7 +52,7 @@ namespace TotalUninstaller
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (PropertyChanged != null) { PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
         }
     }
 }

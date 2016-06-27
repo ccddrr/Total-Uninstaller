@@ -34,15 +34,15 @@ namespace TotalUninstaller
         }
 
 
-        private ObservableCollection<InstalledItem> _items; 
-        public  ObservableCollection<InstalledItem> Items 
+        private ObservableCollection<InstalledItem> _items;
+        public ObservableCollection<InstalledItem> Items
         {
             get { return _items; }
             private set
             {
                 _items = value;
                 OnPropertyChanged();
-            } 
+            }
         }
 
         private string _filterText;
@@ -116,9 +116,9 @@ namespace TotalUninstaller
             _logger.Info("Startup");
             _view = view;
 
-            UninstallCommand       = new DelegateCommand(Uninstall);
+            UninstallCommand = new DelegateCommand(Uninstall);
             CancelUninstallCommand = new DelegateCommand(CancelUninstall);
-            SelectCommand          = new DelegateCommand(SelectForUninstall);
+            SelectCommand = new DelegateCommand(SelectForUninstall);
 
             LoadUninstallableItems();
 
@@ -126,7 +126,7 @@ namespace TotalUninstaller
                       .Where(x => x.EventArgs.PropertyName == "FilterText")
                       .Subscribe(_ => FilteredItems.Refresh());
         }
-        
+
         private void SelectForUninstall()
         {
             foreach (var row in _view.DataGrid.SelectedItems.Cast<InstalledItem>())
@@ -136,38 +136,40 @@ namespace TotalUninstaller
         private void CancelUninstall()
         {
             _logger.Info("Canceling uninstall");
-            Cancelling          = true;
+            Cancelling = true;
             UninstallInProgress = false;
         }
 
         private void LoadUninstallableItems()
         {
-            var installations = ProductInstallation.GetProducts(null, "s-1-1-0", UserContexts.All)
-                                                   .Where(ins  => ins.ProductName != null)
-                                                   .Select(ins => new InstalledItem(ins.ProductName, 
-                                                                                    ins.ProductCode, 
-                                                                                    ins.InstallDate, 
-                                                                                    ins.InstallLocation, 
-                                                                                    ins.UrlInfoAbout, 
-                                                                                    ins.ProductVersion))
+            var products = ProductInstallation.GetProducts(null, "s-1-1-0", UserContexts.All).ToArray();
+            var installations = products
+                                                   .Where(ins => ins.ProductName != null)
+                                                   .Select(ins => new InstalledItem(ins.ProductName,
+                                                                                    ins.ProductCode,
+                                                                                    ins.InstallDate,
+                                                                                    ins.InstallLocation,
+                                                                                    ins.UrlInfoAbout,
+                                                                                    ins.ProductVersion,
+                                                                                    ins.Publisher))
                                                    .OrderBy(ins => ins.Product);
-            
+
             _logger.Info("Found {0} installed items", installations.Count());
             Items = new ObservableCollection<InstalledItem>(installations);
             FilteredItems = CollectionViewSource.GetDefaultView(Items);
             FilteredItems.Filter = ItemFilter();
             FilteredItems.Refresh();
 
-            Cancelling          = false;
+            Cancelling = false;
             UninstallInProgress = false;
-            UninstallCurrent    = 0;
-            UninstallTotal      = 0;
-            UninstallProgress   = 0;
+            UninstallCurrent = 0;
+            UninstallTotal = 0;
+            UninstallProgress = 0;
         }
 
         private Predicate<object> ItemFilter()
         {
-            return item => String.IsNullOrWhiteSpace(FilterText) || ((InstalledItem) item).Product.ToUpper().Contains(FilterText.ToUpper());
+            return item => String.IsNullOrWhiteSpace(FilterText) || ((InstalledItem)item).Product.ToUpper().Contains(FilterText.ToUpper());
         }
 
         private void Uninstall()
@@ -191,7 +193,7 @@ namespace TotalUninstaller
                 {
                     if (t.Result == MessageDialogResult.Negative)
                         return;
-                    
+
                     _logger.Info("Uninstalling {0} item{1}: {2}", count, plural, String.Join(",", itemsToUninstall));
                     UninstallInProgress = true;
                     UninstallTotal = count;
